@@ -5,7 +5,7 @@ services:
     container_name: ollama
     pull_policy: always
     tty: true
-    restart: unless-stopped
+    restart: none
     image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
 
   open-webui:
