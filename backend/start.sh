@@ -20,12 +20,12 @@ if test "$WEBUI_SECRET_KEY $WEBUI_JWT_SECRET_KEY" = " "; then
   WEBUI_SECRET_KEY=$(cat "$KEY_FILE")
 fi
 
-if [ "$USE_OLLAMA_DOCKER" = "true" ]; then
+if [[ "${USE_OLLAMA_DOCKER,,}" == "true" ]]; then
     echo "USE_OLLAMA is set to true, starting ollama serve."
     ollama serve &
 fi
 
-if [ "$USE_CUDA_DOCKER" = "true" ]; then
+if [[ "${USE_CUDA_DOCKER,,}" == "true" ]]; then
   echo "CUDA is enabled, appending LD_LIBRARY_PATH to include torch/cudnn & cublas libraries."
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.11/site-packages/torch/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
 fi
@@ -34,11 +34,6 @@ fi
 # Check if SPACE_ID is set, if so, configure for space
 if [ -n "$SPACE_ID" ]; then
   echo "Configuring for HuggingFace Space deployment"
-  
-  # Copy litellm_config.yaml with specified ownership
-  echo "Copying litellm_config.yaml to the desired location with specified ownership..."
-  cp -f ./space/litellm_config.yaml ./data/litellm/config.yaml
-
   if [ -n "$ADMIN_USER_EMAIL" ] && [ -n "$ADMIN_USER_PASSWORD" ]; then
     echo "Admin user configured, creating"
     WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" uvicorn main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*' &
